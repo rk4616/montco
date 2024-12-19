@@ -1,11 +1,53 @@
-<p>this is the home page</p>
-<div style="display:none;">
-    <img id="temple" width="220" height="277" src="static/bank.png">
-    <img id="crumple" width="220" height="277" src="static/background.png">
-    <img id="tent" width="220" height="277" src="static/tent.png">
+<div style="text-align: center;"></div>
+    <p>Logged in as user {{ current_user.id }}, {{ current_user.username }}</p>
 </div>
-<canvas id="myCanvas" width="1250" height="500" style="border:1px solid #000000;">
-</canvas>
+
+<div id="data-container" style="display: none;">
+    {% for event in events %}
+        <div id="event-{{ event.id }}" data-color="{{ event.color }}"></div>
+    {% endfor %}
+    <div id="progress" data-progress="{{ progress }}"></div>
+</div>
+
+<div style="text-align: center;">
+    <div style="display: inline-block; margin-right: 20px;">
+        <h3>Temple:</h3>
+        <img id="temple" width="60" height="60" src="static/bank.png">
+    </div>
+
+    <div style="display: inline-block; margin-right: 20px;">
+        <h3>War Tent:</h3>
+        <img id="tent" width="60" height="60" src="static/tent2.png">
+    </div>
+    <div style="display: inline-block; margin-right: 20px;">
+        <h3>Farm:</h3>
+        <img id="farm" width="60" height="60" src="static/wheat.png">
+    </div>
+    <div style="display: inline-block; margin-right: 20px;">
+        <h3>Houses:</h3>
+        <img id="houses" width="60" height="60" src="static/greenhouse.png">
+    </div>
+    <div style="display: inline-block; margin-right: 20px;">
+        <h3>Capitol:</h3>
+        <img id="capitol" width="60" height="60" src="static/court.png">
+    </div>
+    <div style="display: inline-block; margin-right: 20px;">
+        <h3>Market:</h3>
+        <img id="market" width="60" height="60" src="static/store.png">
+    </div>
+</div>
+
+<div style="display:none;">
+    <img id="crumple" width="220" height="277" src="static/background.png">
+    <img id="horse" width="220" height="277" src="static/horse.png">
+</div>
+
+<div style="text-align: center;">
+    <canvas id="myCanvas" width="1250" height="520" style="border:1px solid #000000;"></canvas>
+    
+</div>
+<span style="text-align: center;" id="coordinates"></span>
+
 
 <script>
     var c = document.getElementById("myCanvas");
@@ -13,28 +55,170 @@
     ctx.fillStyle = '#f5d39c'
     ctx.fillRect(0, 0, c.width, c.height);
 
+    const crumple = document.getElementById("crumple");
+    crumple.addEventListener("load", (e) => {
+         ctx.drawImage(crumple, 0, 0, 1250, 500);
+    });
+
     ctx.fillStyle = 'black'
     ctx.font = "50px Garamond";
     ctx.fillText("Map of Troy", 10, 50);
 
+    const progress = document.getElementById("progress").dataset.progress;
+    ctx.beginPath();
+    ctx.moveTo(135, 60);
+    ctx.lineTo(135, 500);
+    ctx.lineWidth = 10;
+    ctx.stroke();
+    if (progress < 0.5) {
+        ctx.fillStyle = "red";
+    } else if (progress >= 0.5 && progress < 0.8) {
+        ctx.fillStyle = "yellow";
+    } else {
+        ctx.fillStyle = "green";
+    }
 
+
+    ctx.fillRect(0,500, 1250*progress,20);
+    ctx.stroke();
+
+    ctx.fillStyle = 'black'
+    ctx.font = "22px Garamond"
+    ctx.fillText((progress * 100).toFixed(2) + "%", 600, 518);
+  
+
+    var imageData = [
+        { img: document.getElementById("horse"), x: 5, y: 200, width: 100, height: 100 },
+        { img: document.getElementById("temple"), x: 450, y: 100, width: 70, height: 70 },
+        { img: document.getElementById("temple"), x: 550, y: 400, width: 70, height: 70 },
+        { img: document.getElementById("temple"), x: 900, y: 100, width: 70, height: 70 },
+        { img: document.getElementById("temple"), x: 900, y: 400, width: 70, height: 70 },
+        { img: document.getElementById("temple"), x: 1000, y: 250, width: 70, height: 70 },
+        { img: document.getElementById("tent"), x: 200, y: 350, width: 70, height: 70 },
+        { img: document.getElementById("tent"), x: 200, y: 150, width: 70, height: 70 },
+        { img: document.getElementById("tent"), x: 300, y: 250, width: 70, height: 70 },
+        { img: document.getElementById("farm"), x: 1150, y: 10, width: 70, height: 70 },
+        { img: document.getElementById("farm"), x: 1050, y: 10, width: 70, height: 70 },
+        { img: document.getElementById("farm"), x: 1150, y: 110, width: 70, height: 70 },
+        { img: document.getElementById("farm"), x: 1150, y: 420, width: 70, height: 70 },
+        { img: document.getElementById("farm"), x: 1150, y: 320, width: 70, height: 70 },
+        { img: document.getElementById("farm"), x: 1050, y: 420, width: 70, height: 70 },
+        { img: document.getElementById("market"), x: 460, y: 230, width: 70, height: 70 },
+        { img: document.getElementById("market"), x: 440, y: 290, width: 70, height: 70 },
+        { img: document.getElementById("houses"), x: 297, y: 97, width: 100, height: 100 },
+        { img: document.getElementById("houses"), x: 430, y: 400, width: 100, height: 100 },
+        { img: document.getElementById("houses"), x: 760, y: 100, width: 100, height: 100 },
+        { img: document.getElementById("houses"), x: 790, y: 400, width: 100, height: 100 },
+        { img: document.getElementById("houses"), x: 900, y: 250, width: 100, height: 100 },
+        { img: document.getElementById("capitol"), x: 600, y: 175, width: 200, height: 200 },
+    ];
+
+  
     
-    const temple = document.getElementById("temple");
-    const crumple = document.getElementById("crumple");
-    const tent = document.getElementById("tne");
-    
-    temple.addEventListener("load", (e) => {
-        ctx.drawImage(temple, 100, 250, 80, 80);
-        ctx.drawImage(temple, 800, 300, 80, 80);
-        ctx.drawImage(temple, 500, 50, 80, 80);
-        ctx.drawImage(temple, 1100, 400, 80, 80);
+
+    function drawImages() {
+        imageData.forEach(item => {
+            ctx.drawImage(item.img, item.x, item.y, item.width, item.height);
+        });
+    }
+
+    imageData.forEach(item => {
+        item.img.addEventListener("load", drawImages);
     });
 
-    crumple.addEventListener("load", (e) => {
-        ctx.drawImage(crumple, 0, 0, 1250, 500);
+    var eventData = [
+   
+    { x: 250, y: 300, radius: 20, color: document.getElementById("event-1").dataset.color },
+    { x: 425, y: 315, radius: 20, color: document.getElementById("event-2").dataset.color },
+    { x: 700, y: 390, radius: 20, color: document.getElementById("event-3").dataset.color },
+    { x: 1100, y: 300, radius: 20, color: document.getElementById("event-4").dataset.color },
+    { x: 1130, y: 100, radius: 20, color:document.getElementById("event-5").dataset.color },
+    { x: 1130, y: 400, radius: 20, color: document.getElementById("event-6").dataset.color },
+    { x: 860, y: 94, radius: 20, color: document.getElementById("event-7").dataset.color },
+    { x: 890, y: 380, radius: 20, color: document.getElementById("event-8").dataset.color },
+    { x: 400, y: 100, radius: 20, color: document.getElementById("event-9").dataset.color },
+    { x: 520, y: 390, radius: 20, color: document.getElementById("event-10").dataset.color },
+    // Add more circles as needed
+    ];
+
+    function drawEvents() {
+    eventData.forEach(item => {
+        // Set the fill color for the circle
+        ctx.fillStyle = item.color;
+
+        // Draw the circle
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, item.radius, 0, 2 * Math.PI); // x, y, radius, startAngle, endAngle
+        ctx.fill();
     });
+}
+    drawEvents()
+
+    function isInsideImage(x, y, eventData) {
+        return x >= eventData.x && x <= eventData.x + eventData.width &&
+               y >= eventData.y && y <= eventData.y + eventData.height;
+    }
+
+    function isInsideCircle(mouseX, mouseY, circle) {
+    // Calculate the distance from the mouse click to the center of the circle
+    var dist = Math.sqrt(Math.pow(mouseX - circle.x, 2) + Math.pow(mouseY - circle.y, 2));
+    
+    // Check if the distance is less than or equal to the circle's radius
+    return dist <= circle.radius;
+}
+
+// Set up click event listener on the canvas
+c.addEventListener("click", function(event) {
+    var mouseX = event.offsetX;
+    var mouseY = event.offsetY;
+
+    // Check if the click is inside any circle
+    eventData.forEach((item, index) => {
+        if (isInsideCircle(mouseX, mouseY, item)) {
+            //alert(`You clicked on event ${index + 1}`);
+            window.location.href = `/event/${index + 1}`;
+            
+        }
+    });
+});
+    // const temple = document.getElementById("temple");
+    // const crumple = document.getElementById("crumple");
+    // const tent = document.getElementById("tent");
+    
+    // temple.addEventListener("load", (e) => {
+    //     ctx.drawImage(temple, 100, 250, 80, 80);
+    //     ctx.drawImage(temple, 800, 300, 80, 80);
+    //     ctx.drawImage(temple, 500, 50, 80, 80);
+    //     ctx.drawImage(temple, 1100, 400, 80, 80);
+    // });
+
+    // crumple.addEventListener("load", (e) => {
+    //     ctx.drawImage(crumple, 0, 0, 1250, 500);
+    // });
+
+    // tent.addEventListener("load", (e) => {
+    //     ctx.drawImage(tent, 700, 150, 80, 80);
+    //     ctx.drawImage(tent, 300, 250, 80, 80);
+    //     ctx.drawImage(tent, 500, 300, 80, 80);
+    // });
     
     
-    
+    c.addEventListener("mousemove", function(event) {
+        var mouseX = event.offsetX;
+        var mouseY = event.offsetY;
+        document.getElementById("coordinates").textContent = "Coordinates: (" + mouseX + ", " + mouseY + ")";
+    });
     
     </script>
+
+    <div>
+        <h2>Events</h2>
+        {% for event in events %}
+        <div style="border: 1px solid #000; padding: 10px; margin-bottom: 10px; width: 100%;">
+            <h3><a href="/event/{{ event.id }}">{{ event.title }}</a></h3>
+            <p>{{ event.description }}</p>
+            <p>Status: {{ event.status }}</p>
+            <p>Assigned to: <img src="static/soldiers/{{ event['assigned_to'] }}.png" width="20" height="20" alt="Soldier"> Soldier {{ soldiers[event['assigned_to']]['username'] }}</p>
+        </div>
+        {% endfor %}
+    </div></div>

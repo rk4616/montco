@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event</title>
+    <style>
+        .event {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px;
+            cursor: pointer;
+        }
+        .event-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .event-description {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .soldier-info {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .soldier-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .soldier-info div {
+            font-size: 16px;
+        }
+        .log-form {
+            margin-top: 20px;
+        }
+        .status {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        function setMaxLength() {
+            const logTextArea = document.getElementById('log');
+            const charCount = document.getElementById('char-count');
+            logTextArea.maxLength = 256;
+
+            logTextArea.addEventListener('input', function() {
+                charCount.textContent = `${logTextArea.value.length}/256 characters`;
+            });
+        }
+        window.onload = setMaxLength;
+    </script>
+</head>
+<body>
+    <a href="/">Home</a>
+    <div class="event">
+        <div class="event-title">{{ event.title }}</div>
+        <div class="event-description">{{ event.description }}</div>
+        <div class="soldier-info">
+            <img src="/static/soldiers/{{ event.assigned_to }}.png" alt="Soldier">
+            <div>
+                <div>Soldier Name: {{ soldier['username'] }}</div>
+                <div>Soldier ID: {{ soldier['id'] }} </div>
+            </div>
+        </div>
+        <div class="log-form">
+            <form method="POST">
+                <label for="log">Log:</label><br>
+                <textarea id="log" name="log" rows="5" cols="60">{{ event.log }}</textarea><br><br>
+                <span id="char-count">0/256</span>
+                <div class="status">
+                    <label for="status">Status: </label><br>
+                    <input type="radio" id="not-started" name="status" value="0" {{ "checked" if event._status == 0 else '' }}>
+                    <label for="not-started">Not Started</label><br>
+                    <input type="radio" id="in-progress" name="status" value="1" {{ 'checked' if event._status == 1 else '' }}>
+                    <label for="in-progress">In Progress</label><br>
+                    <input type="radio" id="done" name="status" value="2" {{ 'checked' if event._status == 2 else '' }}>
+                    <label for="done">Done</label>
+                </div><br>
+                <input type="submit" value="Save Changes">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
